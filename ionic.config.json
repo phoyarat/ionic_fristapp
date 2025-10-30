@@ -1,0 +1,7 @@
+{
+  "name": "phoyaratFirstApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
