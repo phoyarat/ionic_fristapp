@@ -1,3 +1,68 @@
-/* For information on how to create your own theme, please see:
-http://ionicframework.com/docs/theming/ */
 
+/* -------- LIGHT MODE (ค่าเริ่มต้น) -------- */
+:root {
+  /* Primary */
+  --ion-color-primary: #00b4d8;
+  --ion-color-primary-rgb: 0, 180, 216;
+  --ion-color-primary-contrast: #ffffff;
+
+  /* Secondary */
+  --ion-color-secondary: #3d5afe;
+  --ion-color-secondary-rgb: 61, 90, 254;
+  --ion-color-secondary-contrast: #ffffff;
+
+  /* Success */
+  --ion-color-success: #2dd36f;
+  --ion-color-success-rgb: 45, 211, 111;
+
+  /* Warning */
+  --ion-color-warning: #ffc409;
+  --ion-color-warning-rgb: 255, 196, 9;
+
+  /* Danger */
+  --ion-color-danger: #eb445a;
+  --ion-color-danger-rgb: 235, 68, 90;
+
+  /* Medium */
+  --ion-color-medium: #92949c;
+
+  /* Light */
+  --ion-color-light: #f4f5f8;
+
+  /* Text Colors */
+  --ion-text-color: #222;
+  --ion-background-color: #ffffff;
+
+  --ion-toolbar-background: var(--ion-color-primary);
+  --ion-toolbar-color: #ffffff;
+}
+/* ===========================================
+    DARK MODE VARIABLES
+   (เปิดใช้เมื่อ body มี class="dark")
+=========================================== */
+body.dark {
+  --ion-color-primary: #1e90ff;
+  --ion-color-primary-contrast: #ffffff;
+
+  --ion-background-color: #121212;
+  --ion-text-color: #e5e5e5;
+
+  /* Toolbar */
+  --ion-toolbar-background: #1f2937;
+  --ion-toolbar-color: #f1f5f9;
+
+  /* Item background default */
+  --ion-item-background: #1e1e1e;
+
+  /* Input / Searchbar */
+  --ion-color-step-50: #1f1f1f;
+  --ion-color-step-100: #2a2a2a;
+  --ion-color-step-150: #333333;
+  --ion-color-step-200: #3d3d3d;
+
+  /* Popup / Alert / Modal */
+  --ion-overlay-background-color: #202020;
+
+  /* Border colors */
+  --ion-border-color: #2d2d2d;
+}

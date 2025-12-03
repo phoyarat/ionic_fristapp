@@ -12,6 +12,7 @@ const routes = [
     name: 'BookDetail',
     component: () => import('../views/BookDetail.vue')
   }
+  
 ]
 
 const router = createRouter({

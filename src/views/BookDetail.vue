@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar class="toolbartoolbar">
+      <ion-toolbar>
         <ion-buttons slot="start">
           <ion-back-button default-href="/books" text="กลับ" />
         </ion-buttons>
@@ -18,30 +18,34 @@
             class="book-cover"
             @error="book.cover_url = '/src/assets/cover-placeholder.png'"
           />
-          
-            <div
-    class="ribbon"
-    :class="{
-      available: book.available_copies > 0,
-      borrowed: book.available_copies === 0,
-    }"
-  >
-    {{ book.available_copies > 0 ? "พร้อมให้ยืม" : "ถูกยืมหมดแล้ว" }}
-  </div>
+
+          <!-- Ribbon -->
+          <div
+            class="ribbon"
+            :class="{
+              available: book.available_copies > 0,
+              borrowed: book.available_copies === 0,
+            }"
+          >
+            {{ book.available_copies > 0 ? "พร้อมให้ยืม" : "ถูกยืมหมดแล้ว" }}
+          </div>
         </div>
 
         <div class="info-section">
           <h2 class="title">{{ book.title }}</h2>
           <p class="author">✎ เขียนโดย: {{ book.author }}</p>
+
           <div class="detail-row">
-            <span class="label">▣ คงเหลือ: </span>
+            <span class="label">▣ คงเหลือ:</span>
             <span class="value">{{ book.available_copies }} เล่ม</span>
           </div>
+
           <div class="detail-row">
-            <span class="price">𖤘 ราคา: </span>
+            <span class="label">𖤘 ราคา:</span>
             <span class="value price">{{ book.price }} ฿</span>
           </div>
 
+          
           <ion-button
             expand="block"
             class="borrow-btn"
@@ -50,6 +54,17 @@
           >
             <ion-icon slot="start" name="book-outline"></ion-icon>
             ยืมหนังสือ
+          </ion-button>
+
+          
+          <ion-button
+            expand="block"
+            color="danger"
+            :disabled="book.available_copies === book.total_copies"
+            @click="returnBook"
+          >
+            <ion-icon slot="start" name="book-outline"></ion-icon>
+            คืนหนังสือ
           </ion-button>
         </div>
       </div>
@@ -89,13 +104,16 @@ export default {
     IonText,
     IonIcon,
   },
+
   data() {
     return {
       book: null,
     };
   },
+
   created() {
     const id = parseInt(this.$route.params.id);
+
     const books = [
       {
         id: 1,
@@ -103,6 +121,7 @@ export default {
         author: "JACK PK",
         price: 299,
         available_copies: 3,
+        total_copies: 3,
         cover_url: "https://api.chulabook.com/images/pid-148910.jpg",
       },
       {
@@ -111,6 +130,7 @@ export default {
         author: "กิตติพง อักนาน",
         price: 277.5,
         available_copies: 0,
+        total_copies: 0,
         cover_url:
           "https://platform-api.nanmeebooks.com/uploads/images/image-1649076106247.jpg",
       },
@@ -120,138 +140,137 @@ export default {
         author: "ศุภชัย สมพานิช",
         price: 265.5,
         available_copies: 5,
+        total_copies: 5,
         cover_url: "https://api.chulabook.com/images/pid-112671.jpg",
       },
     ];
+
     this.book = books.find((b) => b.id === id);
   },
+
   methods: {
     borrowBook() {
       if (this.book.available_copies > 0) {
         this.book.available_copies -= 1;
-        alert(`📚 คุณได้ยืมหนังสือ "${this.book.title}" แล้ว`);
+        alert(` คุณได้ยืมหนังสือ "${this.book.title}" แล้ว`);
       } else {
         alert("❌ หนังสือเล่มนี้ถูกยืมหมดแล้ว");
+      }
+    },
+
+    returnBook() {
+      if (this.book.available_copies < this.book.total_copies) {
+        this.book.available_copies += 1;
+        alert(` คุณได้คืนหนังสือ "${this.book.title}"`);
+      } else {
+        alert("❌ ไม่สามารถคืนได้ เพราะจำนวนหนังสือครบแล้ว");
       }
     },
   },
 };
 </script>
 
-<style scoped>
-ion-content {
-  --background: linear-gradient(180deg, #e3f2fd 0%, #ffffff 100%);
-}
 
-.toolbar {
-  --background: #00b4d8;
-  --color: #fff;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+<style scoped>
+/* พื้นหลัง */
+ion-content {
+  --background: var(--ion-background-color);
 }
 
 .book-card {
-  background: #ffffff;
-  border-radius: 20px;
+  background: var(--ion-item-background, #ffffff);
+  border-radius: 18px;
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 91, 170, 0.15);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: all 0.3s ease;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+  transition: 0.25s ease;
 }
+body.dark .book-card {
+  background: #1e1e1e;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45);
+}
+
 .book-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 35px rgba(0, 91, 170, 0.25);
 }
 
-/* --- ป้ายคาดแนวเฉียง --- */
+/* รูปหนังสือ */
+.cover-container {
+  position: relative;
+}
+.book-cover {
+  width: 70%;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Ribbon */
 .ribbon {
   position: absolute;
-  top: 15px;
+  top: 18px;
   right: -40px;
   width: 140px;
-  text-align: center;
   transform: rotate(45deg);
-  color: #fff;
-  font-weight: bold;
-  font-size: 13px;
+  text-align: center;
   padding: 6px 0;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 4px;
+  color: #fff;
 }
 
-/* สีของป้าย */
+/* Light */
 .ribbon.available {
   background: linear-gradient(90deg, #2ecc71, #27ae60);
 }
-
 .ribbon.borrowed {
   background: linear-gradient(90deg, #e74c3c, #c0392b);
 }
 
-/* ครอบรูปภาพให้เป็นตำแหน่ง relative */
-.cover-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Dark */
+body.dark .ribbon.available {
+  background: linear-gradient(90deg, #27ae60, #1f8b4d);
+}
+body.dark .ribbon.borrowed {
+  background: linear-gradient(90deg, #c0392b, #992a22);
 }
 
-
-.status-overlay.available {
-  background: rgba(0, 200, 83, 0.85);
-  color: white;
-}
-
-.status-overlay.borrowed {
-  background: rgba(229, 57, 53, 0.85);
-  color: white;
-}
-
-/* -------- ส่วนข้อมูล -------- */
+/* ข้อมูลหนังสือ */
 .title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #005baa;
+  color: var(--ion-text-color);
   text-align: center;
+  font-size: 22px;
   margin-top: 12px;
+  font-weight: 700;
 }
+
 .author {
-  color: #555;
-  font-size: 16px;
-  text-align: left;
+  color: var(--ion-text-color);
 }
-.price {
-  color: #00b4d8;
-}
+
 .detail-row {
   display: flex;
-  align-items: center;
-  justify-content: left;
   font-size: 16px;
-  color: #010002;
-}
-.label {
-  margin-right: 4px;
+  color: var(--ion-text-color);
 }
 
-/* -------- ปุ่มยืม -------- */
+.price {
+  color: var(--ion-color-primary);
+}
+
+/* ปุ่ม */
 .borrow-btn {
   margin-top: 20px;
-  --background: linear-gradient(90deg, #0078d7, #00b4d8);
-  font-weight: 600;
+  --background: var(--ion-color-primary);
+  --color: #fff;
   border-radius: 10px;
-  box-shadow: 0 6px 14px rgba(0, 120, 215, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-weight: 600;
 }
-.borrow-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 120, 215, 0.4);
+.borrow-btn:disabled {
+  opacity: 0.6;
 }
 
 .animate {
-  animation: fadeIn 0.8s ease-in-out;
+  animation: fadeIn 0.8s;
 }
 @keyframes fadeIn {
   from {
@@ -260,7 +279,6 @@ ion-content {
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -268,5 +286,6 @@ ion-content {
   text-align: center;
   margin-top: 40px;
   font-size: 16px;
+  color: var(--ion-text-color);
 }
 </style>

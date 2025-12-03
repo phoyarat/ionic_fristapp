@@ -1,0 +1,89 @@
+/* ============================
+   🌞 Light Mode
+============================= */
+ion-content {
+  --background: linear-gradient(180deg, #e3f2fd 0%, #ffffff 100%);
+}
+
+ion-toolbar {
+  --background: #00b4d8;
+  --color: #ffffff;
+}
+
+ion-searchbar {
+  margin: 5px 0 2px;
+  --ion-searchbar-input-background: #ffffff;
+  --ion-background-color: #ffffff;
+  --placeholder-color: #999;
+  border-radius: 8px;
+}
+
+ion-item {
+  --ion-item-background: #e0f7fa;
+  margin-bottom: 5px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: 0.2s;
+}
+
+ion-thumbnail img {
+  width: 100px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+ion-label h2 {
+  font-size: 17px;
+  font-weight: bold;
+  color: #0a3d62;
+}
+
+ion-label p {
+  font-size: 14px;
+  color: #333;
+}
+
+
+
+/* ============================
+   🌙 DARK MODE
+============================= */
+.dark ion-content {
+  --background: linear-gradient(180deg, #1e1e1e 0%, #121212 100%);
+}
+
+.dark ion-toolbar {
+  --background: #111827;
+  --color: #f3f4f6;
+}
+
+.dark ion-searchbar {
+  --ion-searchbar-input-background: #1f2937;
+  --ion-background-color: #1f2937;
+  --placeholder-color: #9ca3af;
+  color: #e5e7eb;
+}
+
+.dark ion-item {
+  --ion-item-background: #1f2937;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.08);
+}
+
+.dark ion-label h2 {
+  color: #f1f5f9;
+}
+
+.dark ion-label p {
+  color: #cbd5e1;
+}
+
+.dark ion-badge[color="success"] {
+  background: #065f46;
+  color: white;
+}
+
+.dark ion-badge[color="danger"] {
+  background: #7f1d1d;
+  color: white;
+}
