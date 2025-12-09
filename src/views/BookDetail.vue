@@ -1,15 +1,8 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button default-href="/books" text="กลับ" />
-        </ion-buttons>
-        <ion-title>รายละเอียดหนังสือ</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="ion-padding">
+  <BaseLayout title="รายละเอียดหนังสือ" :showBack="true">
+    
+    <!-- เนื้อหาหลัก -->
+    <template #default>
       <div v-if="book" class="book-card animate">
         <div class="cover-container">
           <img
@@ -45,61 +38,62 @@
             <span class="value price">{{ book.price }} ฿</span>
           </div>
 
+          <!-- ปุ่มด้านในเนื้อหา -->
           
-          <ion-button
-            expand="block"
-            class="borrow-btn"
-            :disabled="book.available_copies === 0"
-            @click="borrowBook"
-          >
-            <ion-icon slot="start" name="book-outline"></ion-icon>
-            ยืมหนังสือ
-          </ion-button>
 
           
-          <ion-button
-            expand="block"
-            color="danger"
-            :disabled="book.available_copies === book.total_copies"
-            @click="returnBook"
-          >
-            <ion-icon slot="start" name="book-outline"></ion-icon>
-            คืนหนังสือ
-          </ion-button>
         </div>
       </div>
 
       <ion-text v-else color="medium" class="not-found">
         <p>ไม่พบข้อมูลหนังสือ</p>
       </ion-text>
-    </ion-content>
-  </ion-page>
+    </template>
+
+    <!-- Footer -->
+    <template #footer>
+      <ion-toolbar>
+        <div class="footer-buttons">
+          <ion-button
+            expand="block"
+            class="borrow-btn"
+            :disabled="book?.available_copies === 0"
+            @click="borrowBook"
+          >
+            <ion-icon slot="start" name="book-outline"></ion-icon>
+            ยืมหนังสือ
+          </ion-button>
+
+          <ion-button
+            expand="block"
+            color="danger"
+            :disabled="book?.available_copies === book?.total_copies"
+            @click="returnBook"
+          >
+            <ion-icon slot="start" name="book-outline"></ion-icon>
+            คืนหนังสือ
+          </ion-button>
+        </div>
+      </ion-toolbar>
+    </template>
+
+  </BaseLayout>
 </template>
 
+
+
 <script>
+import BaseLayout from "@/components/BaseLayout.vue";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButtons,
-  IonBackButton,
   IonButton,
   IonText,
-  IonIcon,
+  IonIcon
 } from "@ionic/vue";
 
 export default {
   name: "BookDetail",
   components: {
-    IonPage,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonButtons,
-    IonBackButton,
+    BaseLayout,
     IonButton,
     IonText,
     IonIcon,
@@ -169,6 +163,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style scoped>
@@ -288,4 +283,9 @@ body.dark .ribbon.borrowed {
   font-size: 16px;
   color: var(--ion-text-color);
 }
+.book-cover {
+  display: block;       /* ทำให้ img เป็น block element */
+  margin: 0 auto;       /* จัดให้อยู่ตรงกลางแนวนอน */
+}
+
 </style>

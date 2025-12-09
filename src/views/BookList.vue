@@ -1,60 +1,51 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar class="toolbar">
-        <ion-title>รายการหนังสือ</ion-title>
+  <BaseLayout title="รายการหนังสือ">
 
-        <ion-buttons slot="end">
-          <ion-button @click="toggleTheme">
-            <ion-icon :icon="isDark ? moon : sunny"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+    <!-- ปุ่ม Theme อยู่ตรง header-end -->
+    <template #header-end>
+      <ion-buttons slot="end">
+        <ion-button @click="toggleTheme">
+          <ion-icon :icon="isDark ? moon : sunny"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </template>
 
-    <ion-content class="ion-padding">
-      <!-- ช่องค้นหา -->
-      <ion-searchbar
-        v-model="q"
-        @ionInput="filter"
-        placeholder="ค้นหาชื่อ/ผู้เขียน"
-      />
+    <!-- เนื้อหาหลักของหน้า (slot หลัก) -->
+    <ion-searchbar
+      v-model="q"
+      @ionInput="filter"
+      placeholder="ค้นหาชื่อ/ผู้เขียน"
+    />
 
-      <!-- รายการหนังสือ -->
-      <ion-list>
-        <ion-item
-          v-for="book in filtered"
-          :key="book.id"
-          @click="open(book.id)"
-        >
-          <ion-thumbnail slot="start">
-            <img
-              :src="book.cover_url"
-              @error="book.cover_url = '/src/assets/cover-placeholder.png'"
-            />
-          </ion-thumbnail>
+    <ion-list>
+      <ion-item
+        v-for="book in filtered"
+        :key="book.id"
+        @click="open(book.id)"
+      >
+        <ion-thumbnail slot="start">
+          <img :src="book.cover_url" />
+        </ion-thumbnail>
 
-          <ion-label>
-            <h2>{{ book.title }}</h2>
-            <p>{{ book.author }}</p>
-            <p>{{ book.price }}฿</p>
-            <p v-if="book.available_copies">คงเหลือ: {{ book.available_copies }}</p>
-          </ion-label>
+        <ion-label>
+          <h2>{{ book.title }}</h2>
+          <p>{{ book.author }}</p>
+          <p>{{ book.price }}฿</p>
+          <p v-if="book.available_copies">คงเหลือ: {{ book.available_copies }}</p>
+        </ion-label>
 
-          <ion-badge
-            slot="end"
-            v-if="book.available_copies > 0"
-            color="success"
-            >ว่าง</ion-badge
-          >
-          <ion-badge slot="end" v-else color="danger">ถูกยืม</ion-badge>
-        </ion-item>
-      </ion-list>
-    </ion-content>
-  </ion-page>
+        <ion-badge slot="end" v-if="book.available_copies > 0" color="success">ว่าง</ion-badge>
+        <ion-badge slot="end" v-else color="danger">ถูกยืม</ion-badge>
+      </ion-item>
+    </ion-list>
+
+  </BaseLayout>
 </template>
 
+
 <script>
+import BaseLayout from "@/components/BaseLayout.vue";
+
 import { sunny, moon } from "ionicons/icons";
 import {
   IonPage,
@@ -74,23 +65,17 @@ import {
 } from "@ionic/vue";
 
 export default {
-  name: "BookList",
-
   components: {
-    IonPage,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonThumbnail,
-    IonSearchbar,
-    IonBadge,
+    BaseLayout,
     IonButtons,
     IonButton,
     IonIcon,
+    IonSearchbar,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonThumbnail,
   },
 
   data() {
