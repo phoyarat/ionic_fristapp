@@ -1,32 +1,36 @@
 <template>
-  <div class="book-card" @click="handleClick">
-    <img :src="book.cover" class="cover" />
-    <h3>{{ book.title }}</h3>
-    <p>{{ book.author }}</p>
-  </div>
+  <ion-item
+    button
+    detail="false"
+    class="rounded-xl my-2 shadow-sm bg-white"
+    @click="$emit('select', book.id)"
+  >
+    <ion-thumbnail slot="start">
+      <img :src="book.cover_url || '/src/assets/cover-placeholder.png'" />
+    </ion-thumbnail>
+
+    <ion-label>
+      <h2 class="font-semibold text-[15px] text-gray-800">
+        {{ book.title }}
+      </h2>
+
+      <p class="text-gray-600 text-sm">{{ book.author }}</p>
+
+      <small class="text-gray-500">
+        คงเหลือ: {{ book.available_copies }}
+      </small>
+    </ion-label>
+
+    <slot name="extra"></slot>
+  </ion-item>
 </template>
 
 <script setup>
-const props = defineProps({
-  book: Object
+import { IonItem, IonThumbnail, IonLabel } from "@ionic/vue";
+
+defineProps({
+  book: { type: Object, required: true },
 });
 
-// ส่งข้อมูลกลับไป Parent
-const emit = defineEmits(["click-book"]);
-
-function handleClick() {
-  emit("click-book", props.book.id);
-}
+defineEmits(["select"]);
 </script>
-
-<style>
-.book-card {
-  border: 1px solid #eee;
-  padding: 10px;
-  border-radius: 12px;
-  cursor: pointer;
-}
-.cover {
-  width: 100%;
-}
-</style>

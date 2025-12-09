@@ -83,6 +83,7 @@
 
 
 <script>
+import booksData from "@/stores/books.json";
 import BaseLayout from "@/components/BaseLayout.vue";
 import {
   IonButton,
@@ -106,42 +107,9 @@ export default {
   },
 
   created() {
-    const id = parseInt(this.$route.params.id);
-
-    const books = [
-      {
-        id: 1,
-        title: "การเขียนโปรเเกรมด้วย PYTHON",
-        author: "JACK PK",
-        price: 299,
-        available_copies: 3,
-        total_copies: 3,
-        cover_url: "https://api.chulabook.com/images/pid-148910.jpg",
-      },
-      {
-        id: 2,
-        title: "เรียน Coding ระดับเริ่มต้นด้วย Python",
-        author: "กิตติพง อักนาน",
-        price: 277.5,
-        available_copies: 0,
-        total_copies: 0,
-        cover_url:
-          "https://platform-api.nanmeebooks.com/uploads/images/image-1649076106247.jpg",
-      },
-      {
-        id: 3,
-        title: "ความรู้เบื้องต้นภาษาไพธอน",
-        author: "ศุภชัย สมพานิช",
-        price: 265.5,
-        available_copies: 5,
-        total_copies: 5,
-        cover_url: "https://api.chulabook.com/images/pid-112671.jpg",
-      },
-    ];
-
-    this.book = books.find((b) => b.id === id);
-  },
-
+  const id = parseInt(this.$route.params.id);
+  this.book = booksData.find((b) => b.id === id);
+},
   methods: {
     borrowBook() {
       if (this.book.available_copies > 0) {
