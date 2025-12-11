@@ -18,26 +18,14 @@
     />
 
     <ion-list>
-      <ion-item
-        v-for="book in filtered"
-        :key="book.id"
-        @click="open(book.id)"
-      >
-        <ion-thumbnail slot="start">
-          <img :src="book.cover_url" />
-        </ion-thumbnail>
-
-        <ion-label>
-          <h2>{{ book.title }}</h2>
-          <p>{{ book.author }}</p>
-          <p>{{ book.price }}฿</p>
-          <p v-if="book.available_copies">คงเหลือ: {{ book.available_copies }}</p>
-        </ion-label>
-
-        <ion-badge slot="end" v-if="book.available_copies > 0" color="success">ว่าง</ion-badge>
-        <ion-badge slot="end" v-else color="danger">ถูกยืม</ion-badge>
-      </ion-item>
-    </ion-list>
+  <BookCard
+    v-for="book in filtered"
+    :key="book.id"
+    :book="book"
+    @select="open"
+  />
+</ion-list>
+  
 
   </BaseLayout>
 </template>
@@ -45,6 +33,7 @@
 
 <script>
 import BaseLayout from "@/components/BaseLayout.vue";
+import BookCard from "../views/BookCard.vue";
 
 import { sunny, moon } from "ionicons/icons";
 import {
@@ -67,6 +56,7 @@ import {
 export default {
   components: {
     BaseLayout,
+    BookCard,
     IonButtons,
     IonButton,
     IonIcon,

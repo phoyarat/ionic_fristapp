@@ -37,11 +37,6 @@
             <span class="label">𖤘 ราคา:</span>
             <span class="value price">{{ book.price }} ฿</span>
           </div>
-
-          <!-- ปุ่มด้านในเนื้อหา -->
-          
-
-          
         </div>
       </div>
 
