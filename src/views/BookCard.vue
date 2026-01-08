@@ -21,17 +21,27 @@
       </small>
     </ion-label>
 
+    <!-- badge จาก parent -->
     <slot name="extra"></slot>
+
+    <!-- ปุ่มลบ -->
+    <ion-button
+      color="danger"
+      size="small"
+      slot="end"
+      @click.stop="$emit('delete', book.id)"
+    >
+      ลบ
+    </ion-button>
   </ion-item>
 </template>
 
 <script setup>
-import { IonItem, IonThumbnail, IonLabel } from "@ionic/vue";
+import { IonItem, IonThumbnail, IonLabel, IonButton } from "@ionic/vue";
 
 defineProps({
   book: { type: Object, required: true },
 });
 
-defineEmits(["select"]);
+defineEmits(["select", "delete"]);
 </script>
-

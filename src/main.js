@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { IonicVue } from '@ionic/vue'
+import store from "./stores/stores";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css'
@@ -27,6 +28,7 @@ const app = createApp(App)
 /* ✅ ต้องใช้ลำดับนี้เท่านั้น */
 app.use(IonicVue)
 app.use(router)
+app.use(store);
 
 /* ✅ ต้องรอ router พร้อมก่อน mount app */
 router.isReady().then(() => {

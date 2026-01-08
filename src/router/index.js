@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router'
 import BookList from '../views/BookList.vue'
+import Books from '../views/Books.vue'
 
 const routes = [
   {
@@ -11,8 +12,12 @@ const routes = [
     path: '/book/:id',
     name: 'BookDetail',
     component: () => import('../views/BookDetail.vue')
+  },
+  {
+    path: '/books',
+    name: 'Books',
+    component: Books
   }
-  
 ]
 
 const router = createRouter({

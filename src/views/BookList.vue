@@ -1,221 +1,207 @@
 <template>
   <BaseLayout title="รายการหนังสือ">
 
-    <!-- ปุ่ม Theme อยู่ตรง header-end -->
-    <template #header-end>
-      <ion-buttons slot="end">
-        <ion-button @click="toggleTheme">
-          <ion-icon :icon="isDark ? moon : sunny"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </template>
+    <!-- ปุ่มเพิ่มหนังสือ -->
+    <div class="flex justify-center mb-4">
+      <IonButton size="small" @click="showModal = true">
+        <IonIcon :icon="add" />
+        เพิ่มหนังสือ
+      </IonButton>
+    </div>
 
-    <!-- เนื้อหาหลักของหน้า (slot หลัก) -->
-    <ion-searchbar
-      v-model="q"
-      @ionInput="filter"
-      placeholder="ค้นหาชื่อ/ผู้เขียน"
-    />
+    <!-- ค้นหา -->
+    <IonSearchbar v-model="q" placeholder="ค้นหา..." />
 
-    <ion-list>
-  <BookCard
-    v-for="book in filtered"
-    :key="book.id"
-    :book="book"
-    @select="open"
-  />
-</ion-list>
-  
+    <!-- รายการหนังสือ -->
+    <IonList>
+      <BookCard
+        v-for="b in filtered"
+        :key="b.id"
+        :book="b"
+        @select="open"
+        @delete="remove"
+      >
+        <template #extra>
+          <IonBadge :color="b.available_copies > 0 ? 'success' : 'danger'">
+            {{ b.available_copies > 0 ? "ว่าง" : "ยืม" }}
+          </IonBadge>
+        </template>
+      </BookCard>
+    </IonList>
+
+    <!-- Modal เพิ่มหนังสือ -->
+    <IonModal :is-open="showModal" @didDismiss="closeModal">
+
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>เพิ่มหนังสือ</IonTitle>
+
+          <IonButtons slot="end">
+            <IonButton @click="closeModal">ปิด</IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
+
+      <IonContent class="ion-padding">
+
+        <IonItem>
+          <IonInput v-model="form.title" label="ชื่อหนังสือ" />
+        </IonItem>
+
+        <IonItem>
+          <IonInput v-model="form.author" label="ผู้แต่ง" />
+        </IonItem>
+
+        <IonItem>
+          <IonInput v-model="form.price" label="ราคา" />
+        </IonItem>
+
+        <IonItem>
+          <IonInput
+            v-model.number="form.available_copies"
+            type="number"
+            label="จำนวน"
+          />
+        </IonItem>
+
+        <!-- preview image -->
+        <div class="flex justify-center my-4" v-if="form.cover_url">
+          <IonImg :src="form.cover_url" class="w-28 h-40 rounded shadow" />
+        </div>
+
+        <div class="flex justify-center mb-4">
+          <IonButton size="small" color="secondary" @click="selectImage">
+            อัปโหลดรูปปก
+          </IonButton>
+        </div>
+
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          hidden
+          @change="onImageChange"
+        />
+
+        <IonButton expand="block" class="mt-4" @click="saveBook">
+          บันทึก
+        </IonButton>
+
+      </IonContent>
+    </IonModal>
 
   </BaseLayout>
 </template>
 
+<script setup>
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
-<script>
-import BaseLayout from "@/components/BaseLayout.vue";
-import BookCard from "../views/BookCard.vue";
-
-import { sunny, moon } from "ionicons/icons";
+/* Ionic components */
 import {
-  IonPage,
+  IonButton,
+  IonButtons,
+  IonIcon,
+  IonSearchbar,
+  IonList,
+  IonBadge,
+  IonModal,
   IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
-  IonList,
   IonItem,
-  IonLabel,
-  IonThumbnail,
-  IonSearchbar,
-  IonBadge,
-  IonButtons,
-  IonButton,
-  IonIcon,
-} from "@ionic/vue";
+  IonInput,
+  IonImg
+} from "@ionic/vue"
 
-export default {
-  components: {
-    BaseLayout,
-    BookCard,
-    IonButtons,
-    IonButton,
-    IonIcon,
-    IonSearchbar,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonBadge,
-    IonThumbnail,
-  },
+;
 
-  data() {
-    return {
-      q: "",
-      books: [],
-      filtered: [],
-      isDark: false,
-    };
-  },
+/* icon */
+import { add } from "ionicons/icons";
 
-  setup() {
-    return { sunny, moon };
-  },
+/* components */
+import BaseLayout from "@/components/BaseLayout.vue";
+import BookCard from "@/views/BookCard.vue";
 
-  created() {
-    this.loadBooks();
-    this.loadTheme();
-  },
+/* store / router */
+const store = useStore();
+const router = useRouter();
 
-  methods: {
-    /* โหลดข้อมูลหนังสือ */
-    loadBooks() {
-      this.books = [
-        {
-          id: 1,
-          title: "การเขียนโปรเเกรมด้วย PYTHON",
-          author: "JACK PK",
-          price: 299,
-          available_copies: 3,
-          cover_url: "https://api.chulabook.com/images/pid-148910.jpg",
-        },
-        {
-          id: 2,
-          title: "เรียน Coding ระดับเริ่มต้นด้วย Python",
-          author: "กิตติพง อักนาน",
-          price: 277.5,
-          available_copies: 0,
-          cover_url:
-            "https://platform-api.nanmeebooks.com/uploads/images/image-1649076106247.jpg",
-        },
-        {
-          id: 3,
-          title: "ความรู้เบื้องต้นภาษาไพธอน",
-          author: "ศุภชัย สมพานิช",
-          price: 265.5,
-          available_copies: 5,
-          cover_url: "https://api.chulabook.com/images/pid-112671.jpg",
-        },
-          {
-        id: 4,
-        title: "เขียนโปรแกรมด้วย Python",
-        author: "เอกพล นานา",
-        price: 105.5,
-        available_copies: 5,
-        cover_url:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR1b33WcqBUVnFwXnY1Jadlnp3w_2u6ORB0w&s",
-      },
-      {
-        id: 5,
-        title: "ตะลุยโจทย์ Python 500 ข้อ",
-        author: "ดร.สภชัย ดีงาม",
-        price: 200,
-        available_copies: 5,
-        cover_url:
-          "https://cdn-ookbee.okbcdn.net/Books/TAUTOLOGY_CODE/2022/20221004/Thumbnails/Cover.jpg",
-      },
-      {
-        id: 6,
-        title: "NANMEEBOOKS หนังสือ 1000 คำศัพ",
-        author: "พิมเสน จันนา",
-        price: 300,
-        available_copies: 5,
-        cover_url:
-          "https://img.lazcdn.com/g/p/63011f0359243ae78f634291bc48c7a3.jpg_720x720q80.jpg",
-      },
-      {
-        id: 7,
-        title: "หนังสือเรียนเสริมภาษาอังกฤษ ป.2",
-        author: "อัชชาติ โตมา",
-        price: 500,
-        available_copies: 5,
-        cover_url:
-          "https://www.maceducation.com/wp-content/uploads/2018/09/2321205120-cover-1.jpg",
-      },
-      {
-        id: 8,
-        title: "หนังสือเรียนเสริมภาษาอังกฤษ ป.1",
-        author: "สวยราดี ทองมาก",
-        price: 700,
-        available_copies: 5,
-        cover_url:
-          "https://www.maceducation.com/wp-content/uploads/2018/09/2311205140-cover-1.jpg",
-      },
-      {
-        id: 9,
-        title: "หนังสือเรียนภาษาอังกฤษ Blueprint",
-        author: "คิม คำกาก",
-        price: 2000,
-        available_copies: 5,
-        cover_url: "https://inwfile.com/s-fi/k2v01t.jpg",
-      },
-      {
-        id: 10,
-        title: "หนังสือ เก่งภาษาไทยและอังกฤษ อนุบาล",
-        author: "นานาชาติ",
-        price: 1500,
-        available_copies: 5,
-        cover_url:
-          "https://cache-igetweb-v2.mt108.info/uploads/images-cache/13995/product/d37c6a3512cd58a16584978dda18cf73_full.jpg",
-      },
-      ];
+/* search */
+const q = ref("");
 
-      this.filtered = this.books;
-    },
+const books = computed(() => store.getters.allBooks);
 
-    /* ค้นหา */
-    filter() {
-      const q = this.q.toLowerCase();
+const filtered = computed(() =>
+  books.value.filter(
+    (b) =>
+      b.title.toLowerCase().includes(q.value.toLowerCase()) ||
+      b.author.toLowerCase().includes(q.value.toLowerCase())
+  )
+);
+function remove(id) {
+  if (confirm("ต้องการลบหนังสือเล่มนี้ใช่ไหม?")) {
+    store.commit("DELETE_BOOK", id)
+  }
+}
+/* open book detail */
+function open(id) {
+  router.push({ name: "BookDetail", params: { id } });
+}
 
-      this.filtered = this.books.filter(
-        (book) =>
-          book.title.toLowerCase().includes(q) ||
-          book.author.toLowerCase().includes(q)
-      );
-    },
+/* ---------- modal ---------- */
+const showModal = ref(false);
 
-    /* เปิดรายละเอียด */
-    open(id) {
-      this.$router.push(`/book/${id}`);
-    },
+function closeModal() {
+  showModal.value = false;
+}
 
-    /* โหลดธีมจาก localStorage */
-    loadTheme() {
-      const saved = localStorage.getItem("theme-dark");
-      this.isDark = saved === "true";
+/* ---------- form ---------- */
+const form = ref({
+  title: "",
+  author: "",
+  price: "",
+  available_copies: 1,
+  cover_url: ""
+});
 
-      document.body.classList.toggle("dark", this.isDark);
-    },
+/* ---------- upload image ---------- */
+const fileInput = ref(null);
 
-    /* ปุ่มสลับโหมด */
-    toggleTheme() {
-      this.isDark = !this.isDark;
+function selectImage() {
+  fileInput.value.click();
+}
 
-      document.body.classList.toggle("dark", this.isDark);
+function onImageChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
 
-      localStorage.setItem("theme-dark", this.isDark);
-    },
-  },
-};
+  form.value.cover_url = URL.createObjectURL(file);
+}
+
+/* ---------- save ---------- */
+function saveBook() {
+  if (!form.value.title || !form.value.author) {
+    alert("กรอกชื่อหนังสือและผู้แต่งก่อน");
+    return;
+  }
+
+  store.commit("ADD_BOOK", {
+    id: Date.now(),
+    ...form.value
+  });
+
+  // reset form
+  form.value = {
+    title: "",
+    author: "",
+    price: "",
+    available_copies: 1,
+    cover_url: ""
+  };
+
+  showModal.value = false;
+}
 </script>
-
-<style scoped src="../theme/theme.css"></style>
